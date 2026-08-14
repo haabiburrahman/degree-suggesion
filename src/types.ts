@@ -41,6 +41,7 @@ export interface Suggestion {
   importance?: 'high' | 'medium' | 'normal'; // 'high' = ⭐⭐⭐ ৯৯% কমন, 'medium' = ⭐⭐ ৯০% কমন, 'normal' = ⭐ সাধারণ
   examYear?: string; // e.g., '২০২৪', '২০২৩', '২০২২' (বিগত পরীক্ষার সাল)
   targetSession?: string; // e.g., '২০২৬', '২০২৫-২০২৬' (টার্গেট পরীক্ষার সাল)
+  order?: number; // Question serial / upload sequence number (1, 2, 3...)
   createdAt: string;
   updatedAt?: string;
 }

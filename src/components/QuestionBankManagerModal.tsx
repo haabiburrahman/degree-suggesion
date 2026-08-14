@@ -18,6 +18,7 @@ import {
 import { Suggestion, Subject } from '../types';
 import { updateSuggestion } from '../services/db';
 import { SuggestionSection, SECTIONS_META, getSuggestionSection } from '../utils/sectionHelper';
+import { sortSuggestionsBySerial } from '../utils/orderHelper';
 
 interface QuestionBankManagerModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ export const QuestionBankManagerModal: React.FC<QuestionBankManagerModalProps> =
     )
   ).sort().reverse();
 
-  const filteredItems = suggestions.filter(item => {
+  const filteredItems = sortSuggestionsBySerial(suggestions.filter(item => {
     const itemSec = getSuggestionSection(item);
     const matchesSection = sectionFilter === 'ALL' || itemSec === sectionFilter;
 
@@ -69,7 +70,7 @@ export const QuestionBankManagerModal: React.FC<QuestionBankManagerModalProps> =
     const matchesYear = yearFilter === 'all' || item.examYear === yearFilter;
 
     return matchesSection && matchesSearch && matchesYear;
-  });
+  }));
 
   const activeCount = suggestions.filter(isIncludedInActiveSuggestion).length;
   const totalCount = suggestions.length;

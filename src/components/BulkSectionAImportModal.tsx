@@ -96,13 +96,14 @@ export const BulkSectionAImportModal: React.FC<BulkSectionAImportModalProps> = (
     setSaveProgress({ saved: 0, total: parsedItems.length });
 
     try {
-      const payload = parsedItems.map(item => ({
+      const payload = parsedItems.map((item, idx) => ({
         subjectId: selectedSubject.id,
         title: item.title,
         content: item.content,
         section: item.section,
         importance: item.importance,
         inSuggestion: item.inSuggestion,
+        order: item.order || (idx + 1),
         examYear: item.examYear || '',
         contentType: item.inSuggestion ? ('suggestion' as const) : ('question' as const),
         imageUrls: []

@@ -16,6 +16,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Year, Department, Subject, Suggestion, UserProfile } from '../types';
+import { sortSuggestionsBySerial, extractLeadingNumber } from '../utils/orderHelper';
 
 // ==================== USER FUNCTIONS ====================
 export const ADMIN_EMAILS = [
@@ -224,9 +225,9 @@ export function subscribeSuggestions(subjectId: string, callback: (suggestions: 
       id: doc.id,
       ...doc.data()
     })) as Suggestion[];
-    // Sort client side to handle items without explicit createdAt sorting index
-    suggestions.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-    callback(suggestions);
+    // Sort strictly in serial order (by order field, title number, and upload sequence)
+    const sorted = sortSuggestionsBySerial(suggestions);
+    callback(sorted);
   }, (err) => {
     console.error("Firestore subscribeSuggestions error:", err);
   });
@@ -239,16 +240,20 @@ export function subscribeAllSuggestions(callback: (suggestions: Suggestion[]) =>
       id: doc.id,
       ...doc.data()
     })) as Suggestion[];
-    suggestions.sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
-    callback(suggestions);
+    const sorted = sortSuggestionsBySerial(suggestions);
+    callback(sorted);
   }, (err) => {
     console.error("Firestore subscribeAllSuggestions error:", err);
   });
 }
 
 export async function addSuggestion(data: Omit<Suggestion, 'id' | 'createdAt'>): Promise<string> {
+  const extractedOrder = extractLeadingNumber(data.title);
+  const finalOrder = typeof data.order === 'number' ? data.order : (extractedOrder !== null ? extractedOrder : undefined);
+  
   const cleaned = cleanFirestoreData({
     ...data,
+    order: finalOrder,
     createdAt: new Date().toISOString()
   });
   const docRef = await addDoc(collection(db, 'suggestions'), cleaned);
@@ -257,6 +262,7 @@ export async function addSuggestion(data: Omit<Suggestion, 'id' | 'createdAt'>):
 
 /**
  * Bulk insert multiple questions/suggestions in Firestore batches (handles 40-100+ items)
+ * Preserves strict sequential upload ordering and numbers
  */
 export async function addBulkSuggestions(
   items: Omit<Suggestion, 'id' | 'createdAt'>[],
@@ -264,7 +270,7 @@ export async function addBulkSuggestions(
 ): Promise<number> {
   if (!items || items.length === 0) return 0;
 
-  const now = new Date().toISOString();
+  const baseTime = Date.now();
   const BATCH_SIZE = 300; // safe Firestore batch size (limit is 500)
   let totalSaved = 0;
 
@@ -272,11 +278,22 @@ export async function addBulkSuggestions(
     const chunk = items.slice(i, i + BATCH_SIZE);
     const batch = writeBatch(db);
 
-    for (const item of chunk) {
+    for (let j = 0; j < chunk.length; j++) {
+      const item = chunk[j];
+      const overallIndex = i + j;
       const newDocRef = doc(collection(db, 'suggestions'));
+
+      const itemOrder = typeof item.order === 'number'
+        ? item.order
+        : (extractLeadingNumber(item.title) ?? (overallIndex + 1));
+
+      // Spaced timestamps ensure monotonic chronological ordering
+      const itemCreatedAt = new Date(baseTime + overallIndex * 100).toISOString();
+
       const cleanedItem = cleanFirestoreData({
         ...item,
-        createdAt: now
+        order: itemOrder,
+        createdAt: itemCreatedAt
       });
       batch.set(newDocRef, cleanedItem);
     }

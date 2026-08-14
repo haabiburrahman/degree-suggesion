@@ -38,6 +38,7 @@ import { QuestionPickerModal } from '../components/QuestionPickerModal';
 import { QuestionBankManagerModal, isIncludedInActiveSuggestion } from '../components/QuestionBankManagerModal';
 import { BulkSectionAImportModal } from '../components/BulkSectionAImportModal';
 import { SuggestionSection, SECTIONS_META, getSuggestionSection } from '../utils/sectionHelper';
+import { sortSuggestionsBySerial, formatBnSerial, extractLeadingNumber } from '../utils/orderHelper';
 
 interface SuggestionListPageProps {
   selectedSubject: Subject;
@@ -168,10 +169,10 @@ export const SuggestionListPage: React.FC<SuggestionListPageProps> = ({
     return true;
   });
 
-  // Group by Section A, B, C
-  const sectionAGroup = filteredList.filter(s => getSuggestionSection(s) === 'A');
-  const sectionBGroup = filteredList.filter(s => getSuggestionSection(s) === 'B');
-  const sectionCGroup = filteredList.filter(s => getSuggestionSection(s) === 'C');
+  // Group by Section A, B, C and sort by strict serial order
+  const sectionAGroup = sortSuggestionsBySerial(filteredList.filter(s => getSuggestionSection(s) === 'A'));
+  const sectionBGroup = sortSuggestionsBySerial(filteredList.filter(s => getSuggestionSection(s) === 'B'));
+  const sectionCGroup = sortSuggestionsBySerial(filteredList.filter(s => getSuggestionSection(s) === 'C'));
 
   // Count items per section in current tab
   const getSectionCount = (sec: SuggestionSection) => {
@@ -364,6 +365,10 @@ export const SuggestionListPage: React.FC<SuggestionListPageProps> = ({
 
     setSaving(true);
     try {
+      const extractedOrder = extractLeadingNumber(newTitle.trim());
+      const sectionCount = suggestions.filter(s => getSuggestionSection(s) === newSection).length;
+      const calculatedOrder = extractedOrder !== null ? extractedOrder : (sectionCount + 1);
+
       await addSuggestion({
         subjectId: selectedSubject.id,
         title: newTitle.trim(),
@@ -373,6 +378,7 @@ export const SuggestionListPage: React.FC<SuggestionListPageProps> = ({
         pdfUrl: pdfUrl.trim() || '',
         inSuggestion: newInSuggestion,
         importance: newImportance,
+        order: calculatedOrder,
         examYear: newExamYear.trim() || '',
         contentType: newInSuggestion ? 'suggestion' : 'question'
       });
@@ -811,7 +817,7 @@ export const SuggestionListPage: React.FC<SuggestionListPageProps> = ({
                           <div className="flex items-start justify-between gap-3 flex-wrap">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="px-2.5 py-0.5 rounded-md font-heading font-extrabold text-[10px] bg-emerald-700 text-white shadow-2xs">
-                                প্রশ্ন #{index + 1}
+                                প্রশ্ন #{formatBnSerial(index + 1)}
                               </span>
 
                               {inSuggestion ? (
@@ -1035,7 +1041,7 @@ export const SuggestionListPage: React.FC<SuggestionListPageProps> = ({
                           <div className="flex items-center justify-between gap-3 flex-wrap">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="px-2.5 py-0.5 rounded-md font-heading font-extrabold text-[10px] bg-blue-700 text-white shadow-2xs">
-                                সংক্ষিপ্ত প্রশ্ন #{index + 1}
+                                সংক্ষিপ্ত প্রশ্ন #{formatBnSerial(index + 1)}
                               </span>
 
                               {inSuggestion ? (
@@ -1302,7 +1308,7 @@ export const SuggestionListPage: React.FC<SuggestionListPageProps> = ({
                           <div className="flex items-center justify-between gap-3 flex-wrap">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="px-2.5 py-0.5 rounded-md font-heading font-extrabold text-[10px] bg-purple-700 text-white shadow-2xs">
-                                রচনামূলক প্রশ্ন #{index + 1}
+                                রচনামূলক প্রশ্ন #{formatBnSerial(index + 1)}
                               </span>
 
                               {inSuggestion ? (

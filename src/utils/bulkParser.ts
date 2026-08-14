@@ -2,6 +2,7 @@ import { SuggestionSection } from './sectionHelper';
 
 export interface ParsedBulkItem {
   id: string; // temporary key for list
+  order: number; // sequential question order (1, 2, 3...)
   title: string;
   content: string;
   examYear?: string;
@@ -107,9 +108,21 @@ export function parseBulkQuestionsText(
       finalContent += `\n\n[বিগত ${examYear}]`;
     }
 
+    // Extract leading number for strict sequential ordering
+    const numMatch = question.match(/^(?:(?:প্রশ্ন|Question|Q)\s*[:\s\.-]*)?(?:\(|\s*)?([০-৯0-9]+)(?:[\.\)\।\-\:\]]|\s+)/i);
+    let itemOrder = items.length + 1;
+    if (numMatch && numMatch[1]) {
+      const enDigits = convertBengaliToEnglish(numMatch[1]);
+      const parsedNum = parseInt(enDigits, 10);
+      if (!isNaN(parsedNum) && parsedNum > 0 && parsedNum < 10000) {
+        itemOrder = parsedNum;
+      }
+    }
+
     if (cleanTitle) {
       items.push({
         id: `bulk_${Date.now()}_${items.length}_${Math.random().toString(36).substring(2, 6)}`,
+        order: itemOrder,
         title: cleanTitle,
         content: finalContent,
         examYear: examYear || undefined,
