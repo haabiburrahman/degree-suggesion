@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "users": {
+      "title": "Users",
+      "description": "User profiles with role assignment",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    },
+    "years": {
+      "title": "Years",
+      "description": "Academic years hierarchy",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["name", "order"]
+    },
+    "departments": {
+      "title": "Departments",
+      "description": "Departments list",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "order": { "type": "number" }
+      },
+      "required": ["name"]
+    },
+    "subjects": {
+      "title": "Subjects",
+      "description": "Subjects tied to year and department",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "yearId": { "type": "string" },
+        "departmentId": { "type": "string" }
+      },
+      "required": ["name", "yearId", "departmentId"]
+    },
+    "suggestions": {
+      "title": "Suggestions",
+      "description": "Exam suggestions and answers",
+      "type": "object",
+      "properties": {
+        "subjectId": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrls": { "type": "array", "items": { "type": "string" } },
+        "pdfUrl": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["subjectId", "title", "content"]
+    }
+  }
+}

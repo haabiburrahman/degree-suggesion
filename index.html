@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var _currentFetch = window.fetch;
+          Object.defineProperty(window, 'fetch', {
+            get: function() { 
+              return _currentFetch; 
+            },
+            set: function(fn) { 
+              _currentFetch = fn; 
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) {
+          console.warn('Fetch descriptor initialization handled:', e);
+        }
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>ডিগ্রি সাজেশন ও উত্তর | Degree Suggestion Platform</title>
+    
+    <!-- PWA & Mobile Meta Tags -->
+    <meta name="theme-color" content="#1B2A4A" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="ডিগ্রি সাজেশন" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Google Fonts for Bengali -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;500;600;700;800&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-[#FAF6EC] text-[#1B2A4A] min-h-screen font-body antialiased selection:bg-[#F2A93B]/30">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: 'Baloo Da 2', cursive, sans-serif;
+  --font-body: 'Hind Siliguri', sans-serif;
+  --color-cream: #FAF6EC;
+  --color-navy: #1B2A4A;
+  --color-navy-dark: #121D34;
+  --color-amber: #F2A93B;
+  --color-paper: #FFFDF7;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: #FAF6EC;
+  color: #1B2A4A;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+  font-family: var(--font-heading);
+}
+
+/* Notebook Paper Aesthetic */
+.notebook-sheet {
+  background-color: #FFFDF7;
+  border: 1px solid #E2D9C5;
+  box-shadow: 0 4px 12px -2px rgba(27, 42, 74, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+}
+
+.notebook-lined {
+  background-color: #FFFDF7;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #EADFC8 31px,
+    #EADFC8 32px
+  );
+  line-height: 32px;
+}
+
+.notebook-red-margin {
+  position: relative;
+}
+
+.notebook-red-margin::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 2rem;
+  width: 2px;
+  background-color: #E87A7A;
+  opacity: 0.7;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #FAF6EC;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1C7B1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1B2A4A;
+}

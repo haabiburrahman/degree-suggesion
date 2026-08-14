@@ -1,0 +1,6 @@
+{
+  "name": "ডিগ্রি সাজেশন ও উত্তর",
+  "description": "বাংলাদেশের ডিগ্রি পরীক্ষার্থীদের জন্য বিষয়ভিত্তিক পরীক্ষার সাজেশন ও উত্তর দেখার প্ল্যাটফর্ম",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
